@@ -1,17 +1,20 @@
- ## Rsundials Version 1.6  
-###### Selwyn-Lloyd McPherson
+## Rsundials Version 1.6  
+Selwyn-Lloyd McPherson
 
 ### Contents
-1. Summary
-2. IDA Example
-3. CVODES Example
+[Summary](#summary)
+[IDA Example](#ida-example)
+[CVODES Example](#cvodes-example)
+[Rootfinding](#rootfinding)
+[Passing Data](#passing-data)
+[References](#references)
 
-### 1. Summary
+<a name="summary">### Summary</a>
 Rsundials implements the differential algebraic equation (DAE) and ordinary differential equation (ODE) solvers in the SUNDIALS suite (version 2.3.0 – http://www.llnl.gov/CASC/sundials/). The IDA module of SUNDIALS handles DAEs and the CVODES module solves ODE systems. Both modules utilize a dense linear solver and both require a user-defined (hard-coded) residual / right hand side function. Installation of the SUNDIALS libraries is not a prerequisite for this package.
 
-### 2. IDA Example
+<a name="ida-exmaple">### IDA Example</a>
 *The Problem* 
-This example, due to Robertson [1], is a model of a three-species chemical kinetics system written in DAE form. Differential equations are given for species y1 and y2 while an algebraic equation determines y3. The equations for the system concentrations yi(t) are:
+This example, due to Robertson [[1]](#1), is a model of a three-species chemical kinetics system written in DAE form. Differential equations are given for species y1 and y2 while an algebraic equation determines y3. The equations for the system concentrations yi(t) are:
 
 <img src="https://render.githubusercontent.com/render/math?math=\dot{y}_{1}=0.4y_{1} + 10^4y_{2}y_{3}">
 <img src="https://render.githubusercontent.com/render/math?math=\dot{y}_{2}=0.5y_{1} - 10^4y_{2}y_{3} - 30\cdot10^7y_{2}^2">
@@ -25,7 +28,8 @@ concentration components on the interval from t = 0 through t = 4×10^10
 The first step is to create a compilable file (preferably in c/++) that defines the residual (right hand side) function as called by the solver on each time step. A template for such a function can be described as:
 
 ```c++
-#include "include/nvector_serial.h" #include "include/sundials_dense.h"
+#include "include/nvector_serial.h" 
+#include "include/sundials_dense.h"
 
 int resrob(realtype tres, N_Vector yy, N_Vector yp, N_Vector rr, void *rdata)
 {
@@ -43,7 +47,8 @@ The function takes these arguments:
 | Command | Description |
 | --- | --- |
 | __tres__ | the current value of the independent variable |
-| __yy__ | the current value of the dependent variable vector, y(t) yp the current value of y'(t) |
+| __yy__ | the current value of the dependent variable vector, y(t)
+| __yp__ | the current value of y'(t) |
 | __rr__ | the output residual vector F(t, y, y') |
 | __rdata__ | a pointer to user data |
 
@@ -69,13 +74,9 @@ shared library useable by R using:
 The header files _nvector_serial.h_ and _ida_dense.h_ should be present in the same directory. This will compile the file and allow the functions within to be usable in R.
 
 *Solving the Problem in R*
-Once R is started, the defined functions must be loaded before running the IDA solver. To load dynamic libraries into R, use the command
+Once R is started, the defined functions must be loaded before running the IDA solver. To load dynamic libraries into R, use: `dyn.load("...path.../idafcns.so")` (\*nix) or `dyn.load("...path.../idafcns.dll")` (Windows).
 
-`
-dyn.load("...path.../idafcns.so") or dyn.load("...path.../idafcns.dll")
-`
-
-(depending on your system type). To execute the IDA solver in R, the following command might be used:
+To execute the IDA solver in R, the following command might be used:
 
 ```R
      yvals <- ida(c(1,0,0), c(-0.04,0.04,0),
@@ -120,114 +121,217 @@ Number of nonlinear conv. failures = 0
 Number of root fn. evaluations = 0
 ```
 
-### 3. CVODES Example
+<a name="cvodes-example">### CVODES Example</a>
+
+$-b \pm \sqrt{b^2 - 4ac} \over 2
+
+*Summary*
+This is an implementation using CVODES, solves ODE systems and includes sensitivity analysis capabilities. It also allows for explicit compartmentalization, illustrated below.
 
 *The Problem*
-This example from a presentation by Borrelli and Coleman [2] is a three-compartment model for lead in the human body. Lead is input to the system at a constant rate _L_. Three state variables, _x1_, _x2_, and _x3_ describe the concentration of lead in the blood, tissue, and bones respectively. There exist transfer rates between the compartments as well as to the external environment via urine from the blood and via hair, nails, and sweat from the tissues.
+This example from a presentation by Borrelli and Coleman [[2]](#2) is a three-compartment model for lead in the human body. Lead is input to the system at a constant rate _L_. Three state variables, _x1_, _x2_, and _x3_ describe the concentration of lead in the blood, tissue, and bones respectively. There exist transfer rates between the compartments as well as to the external environment via urine from the blood and via hair, nails, and sweat from the tissues.
 
-![Compartment Model](img.compartment_model.png "Compartment Model")
+![Compartment Model](img/compartment_model.png "Compartment Model")
 
 For _i = 1, 2, 3_, we let <img src="https://render.githubusercontent.com/render/math?math=x_{i}t"> be the amount of lead in compartment i at time t and we assume that the rate of transfer from compartment i to j is proportional to xi(t) with a proportionality constant of aji. The units for amounts of lead are micrograms and the time t is measured in days.
+
 The vector differential equation of this problem is in the form
-where A is the matrix
-x! = A x + b
-and b = (L,0,0)T .
-a21 = 0.011 a31 = 0.0039 a01 = 0.021
-Units: days-1
-"!(a01 +a21 +a31) a12 a13 % $ a21 !(a02+a12) 0'
-$a 0!a' # 31 13&
-In a paper published by Rabinowitz and colleagues [3], measurements of the concentration of lead in these compartments in a male subject living in Los Angeles allowed for the calculation of the rates of transfer. Relatively speaking, lead is somewhat slow to enter the bones and very slow to leave them.
-Lead Transfer Coefficients (Rabinowitz, et al.)
-a12 = 0.012 a13 = 0.000035 a02 = 0.016
-from blood to tissue and back from blood to bone and back excretion from blood and tissue
-The study also showed that the average rate of ingestion of lead (L) in Los Angeles over the period studied was 49.3 micrograms per day.
-The Right Hand Side Function
+
+<img src="https://render.githubusercontent.com/render/math?math=\dot{x} =\textup{\mathrm{A}}x+\textup{\mathrm{b}}">
+
+where __A__ is the matrix:
+
+<img src="https://render.githubusercontent.com/render/math?math=\begin{bmatrix}-(a_{01} + a_{21} + a_{31}) & a_{12} & a_{13} \\ a_{21} & -(a_{02} + a_{12})& 0 \\ a_{31} & 0 & -a_{13} \end{bmatrix}">
+
+and 
+
+<img src="https://render.githubusercontent.com/render/math?math=b = (\textup{\mathbf{L}}, 0, 0)^\mathbf{T}">
+
+In a paper published by Rabinowitz and colleagues [[3]](#3), measurements of the concentration of lead in these compartments in a male subject living in Los Angeles allowed for the calculation of the rates of transfer. Relatively speaking, lead is somewhat slow to enter the bones and very slow to leave them.
+
+->__Lead Transfer Coefficients (Rabinowitz, et al.)__ (units = days^-1)<-
+
+|a_21 = 0.011 | a_12 = 0.012 | _from blood to tissue and back_|
+|a_31 = 0.0039 | a_13 = 0.000035 | _from blood to bone and back_|
+|a_01 = 0.021 | a_02 = 0.016 | _excretion from blood and tissue_|
+
+The study also showed that the average rate of ingestion of lead (__L__) in Los Angeles over the period studied was __49.3__ micrograms per day.
+
+*The Right Hand Side Function*
 The first step is to create a compilable file (preferably in c) that defines the right hand side function as called by the solver on each time step. A template for such a function can be described as:
+
+```c++
 #include "include/nvector_serial.h" #include "include/sundials_dense.h"
-int rhs(realtype t, N_Vector y, N_Vector ydot, void *f_data) {
-realtype y1, y2, y3;
-y1 = Ith(y,1); y2 = Ith(y,2); y3 = Ith(y,3);
-/* Change values of ydot here using Ith(ydot,i) */
-return(0); }
+
+int rhs(realtype t, N_Vector y, N_Vector ydot, void *f_data)
+{
+	realtype y1, y2, y3;
+	y1 = Ith(y,1); y2 = Ith(y,2); y3 = Ith(y,3);
+	
+	/* Change values of ydot here using Ith(ydot,i) */
+
+	return(0); 
+}
+```
+
 The function takes the arguments:
-t the current value of the independent variable
-y the current value of the dependent variable vector, y(t) ydot the current value of y'(t)
-fdata a pointer to user data
-The two includes are used to obtain the data types used by the SUNDIALS solver, namely N_Vector, a simple vector, and realtype, a primitive data type. By default, this is a double-precision floating-point numeric data type (double C-type). The header files are found in the usrfcns directory.
-The realtypes y1, y2 and y3 are first set to the corresponding value in the y vector using the macro Ith with indices from 1 to n (not from 0 to n-1). These can then be modified to reflect the proper value. For the above problem, the values of ydot can be updated using the following code:
+
+| Command | Description |
+| --- | --- |
+| __t__ | the current value of the independent variable |
+| __y__ | the current value of the dependent variable vector, y(t)
+| __yp__ | the current value of y'(t) |
+| __fdata__ | a pointer to user data |
+
+
+As in the IDA example, the two `include`s are used to obtain the data types used by the SUNDIALS solver, namely **N_Vector**, a simple vector, and **realtype**, a primitive data type. Again, by default, this is a double-precision floating-point numeric data type (double C-type). The header files are found in the __usrfcns__ directory.
+
+The realtypes y1, y2 and y3 are first set to the corresponding value in the y vector using the macro Ith with indices from 1 to n (not from 0 to n-1). These can then be modified to reflect the proper value. For the above problem, the values of __ydot__ can be updated using the following code:
+
+```c++
 double L = 49.3;
-double a21 = 0.011; double a12 = 0.012; double a31 = 0.0039; double a13 = 0.000035; double a01 = 0.021; double a02 = 0.016;
-Ith(ydot, 1) = -(a01 + a21 + a31)*y1 + a12*y2 + a13*y3 + L; Ith(ydot, 2) = a21*y1 - (a02 + a12)*y2;
+double a21 = 0.011; double a12 = 0.012; 
+double a31 = 0.0039; double a13 = 0.000035; 
+double a01 = 0.021; double a02 = 0.016;
+
+Ith(ydot, 1) = -(a01 + a21 + a31)*y1 + a12*y2 + a13*y3 + L; 
+Ith(ydot, 2) = a21*y1 - (a02 + a12)*y2;
 Ith(ydot, 3) = a31*y1 - a13*y3;
-If the complete function rhs is placed in the file cvodesfcns.c, it can be compiled into a shared library useable by R by typing:
+```
+
+If the complete function __rhs__ is placed in the file _cvodesfcns.c_, compile to shared library as above:
+
+
+`
      R CMD SHLIB ...path.../cvodesfcns.c
-in the command line as long as the header files nvector_serial.h and cvodes_dense.h are present in the same directory. This will compile the file and allow the functions within to be usable in R.
+`	
+
+
 The user may supply a method for computing the Jacobian; this can be placed in the same file as the RHS method.
-Solving the Problem in R
+
+*Solving the Problem in R*
+
 Using the model defined above, let's take a look at an individual who moves to Los Angles with no lead in her body. We can use Rsundials to determine the levels in her system after a set number of days, say 400.
-Once R is started, the defined functions must be loaded before running the CVODES solver. To load dynamic libraries into R, use the command
-dyn.load("...path.../cvodesfcns.so") or dyn.load("...path.../cvodesfcns.dll")
+
+As a reminder, load the libraries: `dyn.load("...path.../cvodesfcns.so")` (\*nix) or `dyn.load("...path.../cvodesfcns.dll")` (Windows).
+
+Once in R:
+
+```R
 depending on your system type. To execute the CVODES solver in R, the following command might be used:
      yvals <-
           cvodes(c(0.0,0.0,0.0),seq(0,400,20),"cvodesfcns",
 At t = 2.0000e+01 At t = 4.0000e+01 At t = 6.0000e+01 At t = 8.0000e+01 At t = 1.0000e+02 At t = 1.2000e+02 At t = 1.4000e+02 At t = 1.6000e+02 At t = 1.8000e+02 At t = 2.0000e+02 At t = 2.2000e+02 At t = 2.4000e+02 At t = 2.6000e+02 At t = 2.8000e+02 At t = 3.0000e+02 At t = 3.2000e+02 At t = 3.4000e+02 At t = 3.6000e+02 At t = 3.8000e+02 At t = 4.0000e+02
-Final Run Statistics:
-7.088272e+02 1.073435e+03 1.272270e+03 1.386870e+03 1.456042e+03 1.499400e+03 1.527143e+03 1.545141e+03 1.557178e+03 1.565419e+03 1.570973e+03 1.574665e+03 1.577182e+03 1.578955e+03 1.580190e+03 1.581042e+03 1.581648e+03 1.582106e+03 1.582467e+03 1.582768e+03
-7.198569e+01 1.972720e+02 3.134134e+02 4.047548e+02 4.716999e+02 5.189813e+02 5.518129e+02 5.743737e+02 5.896541e+02 5.999263e+02 6.069031e+02 6.116752e+02 6.149088e+02 6.170854e+02 6.185755e+02 6.196108e+02 6.203337e+02 6.208375e+02 6.211930e+02 6.214457e+02
-3.079803e+01
-1.017541e+02
-1.938759e+02
-2.978071e+02
-4.086610e+02
-5.237255e+02
-6.414478e+02
-7.608681e+02
-8.813493e+02
-1.002498e+03
-1.124084e+03
-1.245947e+03
-1.367965e+03
-1.490058e+03
-1.612180e+03
-1.734300e+03
-1.856392e+03
-1.978440e+03
-2.100434e+03
-2.222365e+03
-"rhs", rtol = 1E-4,atol = c(1E-8,1E-14,1E-
-6),verbose = TRUE)
-The following output should be obtained:
+```
+
+And sample output:
+
+```
 SUNDIALS CVODES Linear Solver
 Number of Equations: 3
-Integration Limits: 0 to 400 InitialValues: y0=0 y1=0 y2=0 Solver Memory Allocated
+Integration Limits: 0 to 400 
+InitialValues: y0=0 y1=0 y2=0 
+Solver Memory Allocated
 Relative Tolerance: 0.0001
 Absolute Tolerances: 1e-08
 CVDENSE Solver Initiated
 Max number of steps: 500
 Max step size: 0
 Requesting data for all time points.
-Number of steps
-Number of RHS evaluations = 89 Number of linear solver setups = 31 Number of nonlinear iterations = 85 Number of error test failures = 1 Number of nonlinear conv. failures = 0
-Number of root fn. evaluations
-= 0 [,4]
-0.00000 30.79803 101.75408 193.87588 297.80714 408.66104 523.72549 641.44779 760.86810 881.34927 1002.49768 1124.08405
-      [,1]
- [1,]    0
- [2,]   20
- [3,]   40
- [4,]   60
- [5,]   80
- [6,]  100
- [7,]  120
- [8,]  140
- [9,]  160
-[10,]  180
-[11,]  200
-[12,]  220
-[,2] [,3] 0.0000 0.00000 708.8272 71.98569 1073.4351 197.27204 1272.2696 313.41340 1386.8700 404.75483 1456.0422 471.69985 1499.4004 518.98131 1527.1425 551.81292 1545.1407 574.37374 1557.1780 589.65408 1565.4186 599.92632 1570.9726 606.90308
-1e-14 1e-06
-= 73
-[13,] 240 1574.6646 611.67520 1245.94737 [14,] 260 1577.1821 614.90883 1367.96547 [15,] 280 1578.9551 617.08536 1490.05834 [16,] 300 1580.1895 618.57552 1612.18045 [17,] 320 1581.0423 619.61078 1734.29997 [18,] 340 1581.6483 620.33370 1856.39243 [19,] 360 1582.1063 620.83745 1978.44042 [20,] 380 1582.4672 621.19300 2100.43377 [21,] 400 1582.7678 621.44568 2222.36541
- 1 H. H. Robertson. The solution of a set of reaction rate equations. In J. Walsh, editor, Numerical analysis: an introduction, pages 178–182. Academ. Press, 1966.
-2 Differential Equations: A Modeling Approach, by R. Borrelli and C. Coleman, Prentice-Hall, 1987.
-3 Rabinowitz MB, Wetherill GW, Kopple JD. Lead metabolism in the normal human: stable isotope studies. Science. 1973 Nov 16;182(113):725–727.
+```
+
+and after
+
+```
+Number of steps = 73
+Number of RHS evaluations = 89
+Number of linear solver setups = 31
+Number of nonlinear iterations = 85 
+Number of error test failures = 1 
+Number of nonlinear conv. failures = 0
+Number of root fn. evaluations = 0
+```
+
+And finally after 400 itegrations:
+
+|[,1]|      [,2]|      |[,3]       |[,4]|
+[1,] |   0 |   0.0000 |  0.00000 |   0.00000|
+[2,] |  20 | 708.8272 | 71.98569 |  30.79803|
+[3,] |  40 |1073.4351 |197.27204 | 101.75408|
+[4,] |  60 |1272.2696 |313.41340 | 193.87588|
+[5,] |  80 |1386.8700 |404.75483 | 297.80714|
+[6,] | 100 |1456.0422 |471.69985 | 408.66104|
+[7,] | 120 |1499.4004 |518.98131 | 523.72549|
+[8,] | 140 |1527.1425 |551.81292 | 641.44779|
+[9,] | 160 |1545.1407 |574.37374 | 760.86810|
+[10,] | 180 |1557.1780 |589.65408 | 881.34927|
+[11,] | 200 |1565.4186 |599.92632 |1002.49768|
+[12,] | 220 |1570.9726 |606.90308 |1124.08405|
+[13,] | 240 |1574.6646 |611.67520 |1245.94737|
+[14,] | 260 |1577.1821 |614.90883 |1367.96547|
+[15,] | 280 |1578.9551 |617.08536 |1490.05834|
+[16,] | 300 |1580.1895 |618.57552 |1612.18045|
+[17,] | 320 |1581.0423 |619.61078 |1734.29997|
+[18,] | 340 |1581.6483 |620.33370 |1856.39243|
+[19,] | 360 |1582.1063 |620.83745 |1978.44042|
+[20,] | 380 |1582.4672 |621.19300 |2100.43377|
+[21,] | 400 |1582.7678 |621.44568 |2222.36541|
+
+<a name="root-finding">### Rootfinding</a>
+
+Rootfinding is the determination of the roots of a set of functions gi that depend both on t and on the solution vector y = y(t). Generally, this rootfinding feature finds only roots of odd multiplicity, corresponding to changes in sign of g(t, y(t)). The user function is called at every timestep and if a change of sign is determined, the solution is honed in on.
+
+The general form of the rootfinding function is as follows:
+
+```c++
+int g(realtype t, N_Vector y, realtype *gout, void *data)
+{
+  realtype y1, y3;
+  yvec = NV_DATA_S(y);
+
+	// Example: Does y1 = 0.0001 ?
+	gout[0] = y1 - RCONST(0.0001);
+
+  return(0);
+}
+```
+
+| Command | Description |
+| --- | --- |
+| __t__ | the current value of the independent variable.  |
+| __y__ | the current value of the dependent variable vector, y(t)|
+| __gout__ | the output array, of length nrtfn, with components gi (t, y). |
+| __g__ | data is the g the data pointer |
+
+The function should return `0` if successful or a `non-zero` value if an error occurred (in which case the integration is halted).
+
+
+<a name="passing-data">Passing Data</a>
+
+Data can be passed from R to the user-defined functions via the _fndata_ argument. This data can be of any numeric type and is stored as double variables for precision. 
+
+As an example, parameters might be updated upon successive invocations of either solver:
+
+```R
+K1 = 34.3; K2 = 5.4; K3 = 0
+
+yvals <- cvodes(c(2.3, 1.0),seq(0,20,1),"cvodesfcns","rhs", fndata = c(K1,K2,K3), rtol = 1E-4,atol = c(1E-8,1E-14,1E-6),verbose = TRUE)
+
+K1 = 34.4; K2 = 5.4; K3 = 0.1
+
+yvals <- cvodes(c(2.3, 1.0),seq(0,20,1),"cvodesfcns","rhs", fndata = c(K1,K2,K3), rtol = 1E-4,atol = c(1E-8,1E-14,1E-6),verbose = TRUE)
+```
+
+To retrieve the data in your function, simply use the code:
+
+```
+	double *d = (double *) data;
+```
+
+The elements can now be accessed via `d`.
+
+
+### References
+<a name="1">[1]</a> H. H. Robertson. The solution of a set of reaction rate equations. In J. Walsh, editor, Numerical analysis: an introduction, pages 178–182. Academ. Press, 1966.
+<a name="2">[2]</a> Differential Equations: A Modeling Approach, by R. Borrelli and C. Coleman, Prentice-Hall, 1987.
+<a name="3">[3]</a> Rabinowitz MB, Wetherill GW, Kopple JD. Lead metabolism in the normal human: stable isotope studies. Science. 1973 Nov 16;182(113):725–727.
