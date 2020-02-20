@@ -137,11 +137,11 @@ For _i = 1, 2, 3_, we let <img src="https://render.githubusercontent.com/render/
 
 The vector differential equation of this problem is in the form
 
-<img src="https://render.githubusercontent.com/render/math?math=\dot{x} =\textup{\mathrm{A}}x+\textup{\mathrm{b}}">
+<img src="https://render.githubusercontent.com/render/math?math=\dot{x} =\mathrm{A}}x+\textup{\mathrm{b}">
 
 where __A__ is the matrix:
 
-<img src="https://render.githubusercontent.com/render/math?math=\begin{bmatrix}-(a_{01} + a_{21} + a_{31}) & a_{12} & a_{13} \\ a_{21} & -(a_{02} + a_{12})& 0 \\ a_{31} & 0 & -a_{13} \end{bmatrix}">
+![Compartment Model](img/a_matrix/png "Matrix Form")
 
 and 
 
