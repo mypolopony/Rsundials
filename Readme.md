@@ -26,7 +26,7 @@ The initial values are taken as y1 = 1, y2 = 0, and y3 = 0. This example compute
 concentration components on the interval from t = 0 through t = 4×10^10
 
 
-*The Residual Function*
+*The Residual Function*  
 The first step is to create a compilable file (preferably in c/++) that defines the residual (right hand side) function as called by the solver on each time step. A template for such a function can be described as:
 
 ```c++
@@ -75,7 +75,7 @@ shared library useable by R using:
 
 The header files _nvector_serial.h_ and _ida_dense.h_ should be present in the same directory. This will compile the file and allow the functions within to be usable in R.
 
-*Solving the Problem in R*
+*Solving the Problem in R*  
 Once R is started, the defined functions must be loaded before running the IDA solver. To load dynamic libraries into R, use: `dyn.load("...path.../idafcns.so")` (\*nix) or `dyn.load("...path.../idafcns.dll")` (Windows).
 
 To execute the IDA solver in R, the following command might be used:
@@ -126,10 +126,10 @@ Number of root fn. evaluations = 0
 <a name="cvodes-example"></a>
 ### CVODES Example
 
-*Summary*
+*Summary*  
 This is an implementation using CVODES, solves ODE systems and includes sensitivity analysis capabilities. It also allows for explicit compartmentalization, illustrated below.
 
-*The Problem*
+*The Problem*  
 This example from a presentation by Borrelli and Coleman [[2]](#2) is a three-compartment model for lead in the human body. Lead is input to the system at a constant rate _L_. Three state variables, _x1_, _x2_, and _x3_ describe the concentration of lead in the blood, tissue, and bones respectively. There exist transfer rates between the compartments as well as to the external environment via urine from the blood and via hair, nails, and sweat from the tissues.
 
 ![Compartment Model](img/compartment_model.png "Compartment Model")
@@ -160,7 +160,7 @@ In a paper published by Rabinowitz and colleagues [[3]](#3), measurements of the
 
 The study also showed that the average rate of ingestion of lead (__L__) in Los Angeles over the period studied was __49.3__ micrograms per day.
 
-*The Right Hand Side Function*
+*The Right Hand Side Function*  
 The first step is to create a compilable file (preferably in c) that defines the right hand side function as called by the solver on each time step. A template for such a function can be described as:
 
 ```c++
@@ -212,7 +212,7 @@ If the complete function __rhs__ is placed in the file _cvodesfcns.c_, compile t
 
 The user may supply a method for computing the Jacobian; this can be placed in the same file as the RHS method.
 
-*Solving the Problem in R*
+*Solving the Problem in R*.  
 
 Using the model defined above, let's take a look at an individual who moves to Los Angles with no lead in her body. We can use Rsundials to determine the levels in her system after a set number of days, say 400.
 
