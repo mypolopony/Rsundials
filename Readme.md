@@ -1,4 +1,5 @@
-## Rsundials Version 1.6
+## RSundials: An Package For Solving Systems of Differential Equations with Particular Respect to Biochemical Networks (version 1.6)
+
 ---
 ### Contents
 [Summary](#summary)  
