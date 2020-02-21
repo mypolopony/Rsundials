@@ -2,12 +2,12 @@
 Selwyn-Lloyd McPherson
 
 ### Contents
-[Summary](#summary)
-[IDA Example](#ida-example)
-[CVODES Example](#cvodes-example)
-[Rootfinding](#rootfinding)
-[Passing Data](#passing-data)
-[References](#references)
+[Summary](#summary)  
+[IDA Example](#ida-example)  
+[CVODES Example](#cvodes-example)  
+[Rootfinding](#rootfinding)  
+[Passing Data](#passing-data)  
+[References](#references)  
 
 <a name="summary"></a>
 ### Summary
