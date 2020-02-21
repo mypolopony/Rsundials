@@ -90,11 +90,14 @@ To execute the IDA solver in R, the following command might be used:
 The following output (or something similar) should be obtained:
 
 ```
-SUNDIALS IDADENSE Linear Solver Number of Equations: 3 Integration Limits: 0.4 to 4e+10 Solver Memory Allocated
+SUNDIALS IDADENSE Linear Solver Number of Equations: 3 
+Integration Limits: 0.4 to 4e+10 
+Solver Memory Allocated
 Max Number of Steps: 500
 Max step size: 0
 Relative Tolerance: 0.0001
-Absolute Tolerances: 1e-08 1e-14 1e-06 Jacobian Function Initialized
+Absolute Tolerances: 1e-08 1e-14 1e-06 
+Jacobian Function Initialized
 IDADense Linear Solver Initialized
 ```
 
