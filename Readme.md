@@ -1,6 +1,5 @@
-## Rsundials Version 1.6  
-Selwyn-Lloyd McPherson
-
+## Rsundials Version 1.6
+---
 ### Contents
 [Summary](#summary)  
 [IDA Example](#ida-example)  
