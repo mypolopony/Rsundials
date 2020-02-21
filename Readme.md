@@ -151,6 +151,8 @@ In a paper published by Rabinowitz and colleagues [[3]](#3), measurements of the
 
 ->__Lead Transfer Coefficients (Rabinowitz, et al.)__ (units = days^-1)<-
 
+|Param1 | Param2 |Description|
+|--|--|--|
 |a_21 = 0.011 | a_12 = 0.012 | _from blood to tissue and back_|
 |a_31 = 0.0039 | a_13 = 0.000035 | _from blood to bone and back_|
 |a_01 = 0.021 | a_02 = 0.016 | _excretion from blood and tissue_|
@@ -254,6 +256,8 @@ Number of root fn. evaluations = 0
 
 And finally after 400 itegrations:
 
+| |  ||
+|--|--|--|
 |[,1]|      [,2]|      |[,3]       |[,4]|
 [1,] |   0 |   0.0000 |  0.00000 |   0.00000|
 [2,] |  20 | 708.8272 | 71.98569 |  30.79803|
