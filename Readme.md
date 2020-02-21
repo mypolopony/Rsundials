@@ -15,7 +15,7 @@ Rsundials implements the differential algebraic equation (DAE) and ordinary diff
 
 <a name="ida-exmaple"></a>
 ### IDA Example
-*The Problem* 
+*The Problem*  
 This example, due to Robertson [[1]](#1), is a model of a three-species chemical kinetics system written in DAE form. Differential equations are given for species y1 and y2 while an algebraic equation determines y3. The equations for the system concentrations yi(t) are:
 
 <img src="https://render.githubusercontent.com/render/math?math=\dot{y}_{1}=0.4y_{1} + 10^4y_{2}y_{3}">
@@ -142,8 +142,7 @@ The vector differential equation of this problem is in the form
 
 where __A__ is the matrix:
 
-![A Matrix](img/compartment_model.png "A Matrix")
-(img/a_matrix/png "Matrix Form")
+![A Matrix](img/a_matrix.png "A Matrix")
 
 and 
 
@@ -258,8 +257,8 @@ Number of root fn. evaluations = 0
 
 And finally after 400 itegrations:
 
-| |  ||
-|--|--|--|
+| |  ||||
+|--|--|--|--|---|
 |[,1]|      [,2]|      |[,3]       |[,4]|
 [1,] |   0 |   0.0000 |  0.00000 |   0.00000|
 [2,] |  20 | 708.8272 | 71.98569 |  30.79803|
@@ -313,7 +312,8 @@ int g(realtype t, N_Vector y, realtype *gout, void *data)
 The function should return `0` if successful or a `non-zero` value if an error occurred (in which case the integration is halted).
 
 
-<a name="passing-data">Passing Data</a>
+<a name="passing-data"></a>
+### Passing Data
 
 Data can be passed from R to the user-defined functions via the _fndata_ argument. This data can be of any numeric type and is stored as double variables for precision. 
 
@@ -322,11 +322,13 @@ As an example, parameters might be updated upon successive invocations of either
 ```R
 K1 = 34.3; K2 = 5.4; K3 = 0
 
-yvals <- cvodes(c(2.3, 1.0),seq(0,20,1),"cvodesfcns","rhs", fndata = c(K1,K2,K3), rtol = 1E-4,atol = c(1E-8,1E-14,1E-6),verbose = TRUE)
+yvals <- cvodes(c(2.3, 1.0),seq(0,20,1),"cvodesfcns","rhs", fndata = c(K1,K2,K3), 
+				rtol = 1E-4,atol = c(1E-8,1E-14,1E-6),verbose = TRUE)
 
 K1 = 34.4; K2 = 5.4; K3 = 0.1
 
-yvals <- cvodes(c(2.3, 1.0),seq(0,20,1),"cvodesfcns","rhs", fndata = c(K1,K2,K3), rtol = 1E-4,atol = c(1E-8,1E-14,1E-6),verbose = TRUE)
+yvals <- cvodes(c(2.3, 1.0),seq(0,20,1),"cvodesfcns","rhs", fndata = c(K1,K2,K3), 
+				rtol = 1E-4,atol = c(1E-8,1E-14,1E-6),verbose = TRUE)
 ```
 
 To retrieve the data in your function, simply use the code:
