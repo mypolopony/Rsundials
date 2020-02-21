@@ -9,10 +9,12 @@ Selwyn-Lloyd McPherson
 [Passing Data](#passing-data)
 [References](#references)
 
-<a name="summary">### Summary</a>
+<a name="summary"></a>
+### Summary
 Rsundials implements the differential algebraic equation (DAE) and ordinary differential equation (ODE) solvers in the SUNDIALS suite (version 2.3.0 – http://www.llnl.gov/CASC/sundials/). The IDA module of SUNDIALS handles DAEs and the CVODES module solves ODE systems. Both modules utilize a dense linear solver and both require a user-defined (hard-coded) residual / right hand side function. Installation of the SUNDIALS libraries is not a prerequisite for this package.
 
-<a name="ida-exmaple">### IDA Example</a>
+<a name="ida-exmaple"></a>
+### IDA Example
 *The Problem* 
 This example, due to Robertson [[1]](#1), is a model of a three-species chemical kinetics system written in DAE form. Differential equations are given for species y1 and y2 while an algebraic equation determines y3. The equations for the system concentrations yi(t) are:
 
@@ -121,9 +123,8 @@ Number of nonlinear conv. failures = 0
 Number of root fn. evaluations = 0
 ```
 
-<a name="cvodes-example">### CVODES Example</a>
-
-$-b \pm \sqrt{b^2 - 4ac} \over 2
+<a name="cvodes-example"></a>
+### CVODES Example
 
 *Summary*
 This is an implementation using CVODES, solves ODE systems and includes sensitivity analysis capabilities. It also allows for explicit compartmentalization, illustrated below.
@@ -137,11 +138,12 @@ For _i = 1, 2, 3_, we let <img src="https://render.githubusercontent.com/render/
 
 The vector differential equation of this problem is in the form
 
-<img src="https://render.githubusercontent.com/render/math?math=\dot{x} =\mathrm{A}}x+\textup{\mathrm{b}">
+<img src="https://render.githubusercontent.com/render/math?math=\dot{x} =\mathrm{A}x+\mathrm{b}">
 
 where __A__ is the matrix:
 
-![Compartment Model](img/a_matrix/png "Matrix Form")
+![A Matrix](img/compartment_model.png "A Matrix")
+(img/a_matrix/png "Matrix Form")
 
 and 
 
@@ -281,7 +283,8 @@ And finally after 400 itegrations:
 [20,] | 380 |1582.4672 |621.19300 |2100.43377|
 [21,] | 400 |1582.7678 |621.44568 |2222.36541|
 
-<a name="root-finding">### Rootfinding</a>
+<a name="root-finding"></a>
+### Rootfinding
 
 Rootfinding is the determination of the roots of a set of functions gi that depend both on t and on the solution vector y = y(t). Generally, this rootfinding feature finds only roots of odd multiplicity, corresponding to changes in sign of g(t, y(t)). The user function is called at every timestep and if a change of sign is determined, the solution is honed in on.
 
@@ -335,7 +338,8 @@ To retrieve the data in your function, simply use the code:
 The elements can now be accessed via `d`.
 
 
+<a name="references"></a>
 ### References
-<a name="1">[1]</a> H. H. Robertson. The solution of a set of reaction rate equations. In J. Walsh, editor, Numerical analysis: an introduction, pages 178–182. Academ. Press, 1966.
-<a name="2">[2]</a> Differential Equations: A Modeling Approach, by R. Borrelli and C. Coleman, Prentice-Hall, 1987.
+<a name="1">[1]</a> H. H. Robertson. The solution of a set of reaction rate equations. In J. Walsh, editor, Numerical analysis: an introduction, pages 178–182. Academ. Press, 1966.  
+<a name="2">[2]</a> Differential Equations: A Modeling Approach, by R. Borrelli and C. Coleman, Prentice-Hall, 1987.  
 <a name="3">[3]</a> Rabinowitz MB, Wetherill GW, Kopple JD. Lead metabolism in the normal human: stable isotope studies. Science. 1973 Nov 16;182(113):725–727.
