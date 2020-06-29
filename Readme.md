@@ -10,13 +10,12 @@
 * [References](#references)  
 
 <a name="summary"></a>
-### Summary
+## Summary
 Rsundials implements the differential algebraic equation (DAE) and ordinary differential equation (ODE) solvers in the SUNDIALS suite (version 2.3.0 – http://www.llnl.gov/CASC/sundials/). The IDA module of SUNDIALS handles DAEs and the CVODES module solves ODE systems. Both modules utilize a dense linear solver and both require a user-defined (hard-coded) residual / right hand side function. Installation of the SUNDIALS libraries is not a prerequisite for this package.
 
 <a name="ida-exmaple"></a>
-### IDA Example
-*The Problem*  
-
+## IDA Example
+### The Problem
 This example, due to Robertson [[1]](#1), is a model of a three-species chemical kinetics system written in DAE form. Differential equations are given for species y1 and y2 while an algebraic equation determines y3. The equations for the system concentrations yi(t) are:
 
 <img src="https://render.githubusercontent.com/render/math?math=\dot{y}_{1}=0.4y_{1} + 10^4y_{2}y_{3}">
@@ -27,8 +26,7 @@ The initial values are taken as y1 = 1, y2 = 0, and y3 = 0. This example compute
 concentration components on the interval from t = 0 through t = 4×10^10
 
 
-*The Residual Function*  
-
+### The Residual Function
 The first step is to create a compilable file (preferably in c/++) that defines the residual (right hand side) function as called by the solver on each time step. A template for such a function can be described as:
 
 ```c++
@@ -77,8 +75,7 @@ shared library useable by R using:
 
 The header files _nvector_serial.h_ and _ida_dense.h_ should be present in the same directory. This will compile the file and allow the functions within to be usable in R.
 
-*Solving the Problem in R*  
-
+### Solving the Problem in R
 Once R is started, the defined functions must be loaded before running the IDA solver. To load dynamic libraries into R, use: `dyn.load("...path.../idafcns.so")` (\*nix) or `dyn.load("...path.../idafcns.dll")` (Windows).
 
 To execute the IDA solver in R, the following command might be used:
@@ -129,14 +126,13 @@ Number of nonlinear conv. failures = 0
 Number of root fn. evaluations = 0
 ```
 
-<a name="cvodes-example"></a>
-### CVODES Example
+## CVODES Example
 
-*Summary*  
+### Summary  
 
 This is an implementation using CVODES, solves ODE systems and includes sensitivity analysis capabilities. It also allows for explicit compartmentalization, illustrated below.
 
-*The Problem (A Different One)*  
+### The Problem (A Different One)
 
 This example from a presentation by Borrelli and Coleman [[2]](#2) is a three-compartment model for lead in the human body. Lead is input to the system at a constant rate _L_. Three state variables, _x1_, _x2_, and _x3_ describe the concentration of lead in the blood, tissue, and bones respectively. There exist transfer rates between the compartments as well as to the external environment via urine from the blood and via hair, nails, and sweat from the tissues.
 
@@ -158,13 +154,15 @@ and
 
 In a paper published by Rabinowitz and colleagues [[3]](#3), measurements of the concentration of lead in these compartments in a male subject living in Los Angeles allowed for the calculation of the rates of transfer. Relatively speaking, lead is somewhat slow to enter the bones and very slow to leave them.
 
-->__Lead Transfer Coefficients (Rabinowitz, et al.)__ (units = days^-1)<-
+_per_ __Lead Transfer Coefficients (Rabinowitz, et al.)__:
 
-|Param1 | Param2 |Description|
-|--|--|--|
+| Param1 | Param2 | Description |
+| --- | --- | --- |
 |a_21 = 0.011 | a_12 = 0.012 | _from blood to tissue and back_|
 |a_31 = 0.0039 | a_13 = 0.000035 | _from blood to bone and back_|
 |a_01 = 0.021 | a_02 = 0.016 | _excretion from blood and tissue_|
+
+*(units = days^-1)*
 
 The study also showed that the average rate of ingestion of lead (__L__) in Los Angeles over the period studied was __49.3__ micrograms per day.
 
@@ -221,7 +219,7 @@ If the complete function __rhs__ is placed in the file _cvodesfcns.c_, compile t
 
 The user may supply a method for computing the Jacobian; this can be placed in the same file as the RHS method.
 
-*Solving the Problem in R*  
+### Solving the Problem in R
 
 Using the model defined above, let's take a look at an individual who moves to Los Angles with no lead in her body. We can use Rsundials to determine the levels in her system after a set number of days, say 400.
 
@@ -322,6 +320,7 @@ The function should return `0` if successful or a `non-zero` value if an error o
 
 
 <a name="passing-data"></a>
+
 ### Passing Data
 
 Data can be passed from R to the user-defined functions via the _fndata_ argument. This data can be of any numeric type and is stored as double variables for precision. 
@@ -350,6 +349,7 @@ The elements can now be accessed via `d`.
 
 
 <a name="references"></a>
+
 ### References
 <a name="1">[1]</a> H. H. Robertson. The solution of a set of reaction rate equations. In J. Walsh, editor, Numerical analysis: an introduction, pages 178–182. Academ. Press, 1966.  
 <a name="2">[2]</a> Differential Equations: A Modeling Approach, by R. Borrelli and C. Coleman, Prentice-Hall, 1987.  
