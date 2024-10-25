@@ -18,7 +18,7 @@ Rsundials implements the differential algebraic equation (DAE) and ordinary diff
 ### The Problem
 This example, due to Robertson [[1]](#1), is a model of a three-species chemical kinetics system written in DAE form. Differential equations are given for species y1 and y2 while an algebraic equation determines y3. The equations for the system concentrations yi(t) are:
 
-![Eq. 1](img/eq1.png)
+![Eq. 1](img/eq1.png) 
 d
 ![Eq. 2](img/eq2.png)
 ![Eq. 3](img/eq3.png)
