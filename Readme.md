@@ -18,10 +18,9 @@ Rsundials implements the differential algebraic equation (DAE) and ordinary diff
 ### The Problem
 This example, due to Robertson [[1]](#1), is a model of a three-species chemical kinetics system written in DAE form. Differential equations are given for species y1 and y2 while an algebraic equation determines y3. The equations for the system concentrations yi(t) are:
 
-<img src="https://render.githubusercontent.com/render/math?math=\dot{y}_{1}=0.4y_{1} + 10^4y_{2}y_{3}">
-![Equation]("https://latex.codecogs.com/png.latex?\dot{y}_{1}=0.4y_{1}+10^4y_{2}y_{3}")
-<img src="https://render.githubusercontent.com/render/math?math=\dot{y}_{2}=0.5y_{1} - 10^4y_{2}y_{3} - 30\cdot10^7y_{2}^2">
-<img src="https://render.githubusercontent.com/render/math?math=0 = y_{1} + y_{2} + y_{3} - 1">
+![Eq. 1](img/eq1.png)  
+![Eq. 2](img/eq2.png)  
+![Eq. 3](img/eq3.png)
 
 The initial values are taken as y1 = 1, y2 = 0, and y3 = 0. This example computes the three
 concentration components on the interval from t = 0 through t = 4×10^10
@@ -139,11 +138,11 @@ This example from a presentation by Borrelli and Coleman [[2]](#2) is a three-co
 
 ![Compartment Model](img/compartment_model.png "Compartment Model")
 
-For _i = 1, 2, 3_, we let <img src="https://render.githubusercontent.com/render/math?math=x_{i}t"> be the amount of lead in compartment i at time t and we assume that the rate of transfer from compartment i to j is proportional to xi(t) with a proportionality constant of aji. The units for amounts of lead are micrograms and the time t is measured in days.
+For _i = 1, 2, 3_, we let ![Eq. 4](img/eq4.png) be the amount of lead in compartment i at time t and we assume that the rate of transfer from compartment i to j is proportional to xi(t) with a proportionality constant of aji. The units for amounts of lead are micrograms and the time t is measured in days.
 
 The vector differential equation of this problem is in the form
 
-<img src="https://render.githubusercontent.com/render/math?math=\dot{x} =\mathrm{A}x+\mathrm{b}">
+![Eq. 5](img/eq5.png)
 
 where __A__ is the matrix:
 
@@ -151,7 +150,7 @@ where __A__ is the matrix:
 
 and 
 
-<img src="https://render.githubusercontent.com/render/math?math=b = (\textup{\mathbf{L}}, 0, 0)^\mathbf{T}">
+![Eq. 6](img/eq6.png)
 
 In a paper published by Rabinowitz and colleagues [[3]](#3), measurements of the concentration of lead in these compartments in a male subject living in Los Angeles allowed for the calculation of the rates of transfer. Relatively speaking, lead is somewhat slow to enter the bones and very slow to leave them.
 
