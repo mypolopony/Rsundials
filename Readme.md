@@ -18,10 +18,9 @@ Rsundials implements the differential algebraic equation (DAE) and ordinary diff
 ### The Problem
 This example, due to Robertson [[1]](#1), is a model of a three-species chemical kinetics system written in DAE form. Differential equations are given for species y1 and y2 while an algebraic equation determines y3. The equations for the system concentrations yi(t) are:
 
-<img src="https://render.githubusercontent.com/render/math?math=\dot{y}_{1}=0.4y_{1} + 10^4y_{2}y_{3}">
-![Equation]("https://latex.codecogs.com/png.latex?\dot{y}_{1}=0.4y_{1}+10^4y_{2}y_{3}")
-<img src="https://render.githubusercontent.com/render/math?math=\dot{y}_{2}=0.5y_{1} - 10^4y_{2}y_{3} - 30\cdot10^7y_{2}^2">
-<img src="https://render.githubusercontent.com/render/math?math=0 = y_{1} + y_{2} + y_{3} - 1">
+![Eq. 1](img/eq1.png)
+![Eq. 2](img/eq2.png)
+![Eq. 3](img/eq3.png)
 
 The initial values are taken as y1 = 1, y2 = 0, and y3 = 0. This example computes the three
 concentration components on the interval from t = 0 through t = 4×10^10
@@ -143,7 +142,7 @@ For _i = 1, 2, 3_, we let <img src="https://render.githubusercontent.com/render/
 
 The vector differential equation of this problem is in the form
 
-<img src="https://render.githubusercontent.com/render/math?math=\dot{x} =\mathrm{A}x+\mathrm{b}">
+![Eq. 4](img/eq4.png)
 
 where __A__ is the matrix:
 
